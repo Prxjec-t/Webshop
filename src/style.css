@@ -1,3 +1,28 @@
 body {
   background-color: antiquewhite;
 }
+
+.products-list article {
+  border: 3px solid black;
+  margin-bottom: 4px;
+}
+
+.products-list .metadata {
+  display: flex;
+  justify-content: space-between;
+}
+
+.products-list img {
+  max-width: 150px;
+}
+
+@media screen and (min-width: 720px) {
+  .products-list {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .products-list article {
+    width: 32%;
+  }
+}

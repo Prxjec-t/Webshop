@@ -7,6 +7,8 @@ function helloWorld() {
   alert("Hej Världen!");
 }
 
+const currency = [{ name: "Caps", img: "./img/caps.webp" }];
+
 const products = [
   {
     name: "Nuka-Cola",
@@ -19,7 +21,7 @@ const products = [
   {
     name: "Stimpak",
     price: 75,
-    rating: 4.8,
+    rating: 4.5,
     category: "Chems",
     img: "./img/stimpak.webp",
   },
@@ -47,6 +49,46 @@ const products = [
     category: "Drinks",
     img: "./img/purifiedwater.webp",
   },
+
+  {
+    name: "RadAway",
+    price: 20,
+    rating: 4,
+    category: "Chems",
+    img: "./img/radaway.webp",
+  },
+
+  {
+    name: "Potato Crisps",
+    price: 5,
+    rating: 3,
+    category: "Food",
+    img: "./img/potatocrisps.webp",
+  },
+
+  {
+    name: "Nuka-Cola Quartz",
+    price: 40,
+    rating: 5,
+    category: "Drinks",
+    img: "./img/nukacolaquartz.webp",
+  },
+
+  {
+    name: "Buffalo Gourd Seed",
+    price: 2,
+    rating: 2,
+    category: "Food",
+    img: "./img/buffalogourdseed.webp",
+  },
+
+  {
+    name: "Mentats",
+    price: 20,
+    rating: 5,
+    category: "Chems",
+    img: "./img/mentats.webp",
+  },
 ];
 
 const DrinkFilterBtn = document.querySelector("#DrinkFilterBtn");
@@ -68,11 +110,11 @@ for (let i = 0; i < products.length; i++) {
     <article>
     <h2>${currentProduct.name}</h2>
     <div class="metadata">
-        <p>Pris: ${currentProduct.price} Caps</p>
+        <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" alt="${currency[0].name}"></p>
         <p>Betyg: ${currentProduct.rating} / 5</p>
       </div>
       <p>Kategori: ${currentProduct.category}</p>
-      <img src="${currentProduct.img}" alt="${currentProduct.name}" />
+      <img class="product-image" src="${currentProduct.img}" alt="${currentProduct.name}" />
     </article>
   `;
 

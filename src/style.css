@@ -4,8 +4,10 @@ body {
 
 .products-list article {
   border: 3px solid black;
-  margin-bottom: 4px;
+  margin: 10px;
   padding: 0 5px;
+  box-shadow: 5px 5px 5px gray;
+  min-height: 40vh;
 }
 
 .products-list .metadata {
@@ -13,17 +15,26 @@ body {
   justify-content: space-between;
 }
 
-.products-list img {
-  max-width: 150px;
+.products-list .product-image {
+  max-width: 175px;
+  display: block;
+  margin: 10px auto;
+}
+
+.products-list .currency-icon {
+  width: 16px;
+  vertical-align: middle;
 }
 
 @media screen and (min-width: 720px) {
   .products-list {
-    display: flex;
-    justify-content: space-between;
-    gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
   }
+
   .products-list article {
-    width: 32%;
+    margin-bottom: 0;
+    width: 85%;
   }
 }

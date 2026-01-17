@@ -29,7 +29,7 @@ const products = [
   {
     name: "Jet",
     price: 20,
-    rating: 2,
+    rating: 1,
     category: "Chems",
     img: "./img/jet.webp",
   },
@@ -91,26 +91,52 @@ const products = [
   },
 ];
 
-const DrinkFilterBtn = document.querySelector("#DrinkFilterBtn");
-DrinkFilterBtn.addEventListener("click", filterDrinks);
-
-function filterDrinks() {
-  const result = products.filter((product) => product.category == "Drinks");
-  console.log(result);
-}
-
-console.log(products);
-
+let filteredProducts = Array.from(products);
 const productsListing = document.querySelector("#products");
 
-for (let i = 0; i < products.length; i++) {
-  const currentProduct = products[i];
+const DrinkFilterBtn = document.querySelector("#DrinkFilterBtn");
+const ChemsFilterBtn = document.querySelector("#ChemsFilterBtn");
+const FoodFilterBtn = document.querySelector("#FoodFilterBtn");
+const showAllFilterBtn = document.querySelector("#showAllFilterBtn");
 
-  const html = `
-    <article>
-    <h2>${currentProduct.name}</h2>
-    <div class="metadata">
-        <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" alt="${currency[0].name}"></p>
+DrinkFilterBtn.addEventListener("click", filterDrinks);
+ChemsFilterBtn.addEventListener("click", filterChems);
+FoodFilterBtn.addEventListener("click", filterFood);
+showAllFilterBtn.addEventListener("click", showAllProducts);
+
+function showAllProducts() {
+  filteredProducts = Array.from(products);
+  printProducts();
+}
+
+function filterFood() {
+  filteredProducts = products.filter((product) => product.category == "Food");
+  printProducts();
+}
+
+function filterChems() {
+  filteredProducts = products.filter((product) => product.category == "Chems");
+  printProducts();
+}
+
+function filterDrinks() {
+  filteredProducts = products.filter((product) => product.category == "Drinks");
+  printProducts();
+}
+
+printProducts();
+
+function printProducts() {
+  productsListing.innerHTML = "";
+
+  for (let i = 0; i < filteredProducts.length; i++) {
+    const currentProduct = filteredProducts[i];
+
+    const html = `
+     <article>
+      <h2>${currentProduct.name}</h2>
+      <div class="metadata">
+        <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" alt="${currency[0].name}"> ${currency[0].name} </p>
         <p>Betyg: ${currentProduct.rating} / 5</p>
       </div>
       <p>Kategori: ${currentProduct.category}</p>
@@ -118,5 +144,6 @@ for (let i = 0; i < products.length; i++) {
     </article>
   `;
 
-  productsListing.innerHTML += html;
+    productsListing.innerHTML += html;
+  }
 }

@@ -5,6 +5,7 @@ body {
 .products-list article {
   border: 3px solid black;
   margin-bottom: 4px;
+  padding: 0 5px;
 }
 
 .products-list .metadata {

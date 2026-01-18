@@ -110,6 +110,16 @@ sortByNameBtn.addEventListener("click", sortByName);
 const sortByPriceBtn = document.querySelector("#sortByPriceBtn");
 sortByPriceBtn.addEventListener("click", sortByPrice);
 
+const sortByLowPriceBtn = document.querySelector("#sortByLowPriceBtn");
+sortByLowPriceBtn.addEventListener("click", sortByLowPrice);
+
+function sortByLowPrice() {
+  filteredProducts.sort(
+    (product1, product2) => product1.price - product2.price,
+  );
+  printProducts();
+}
+
 function sortByPrice() {
   filteredProducts.sort(
     (product1, product2) => product2.price - product1.price,

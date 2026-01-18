@@ -104,6 +104,35 @@ ChemsFilterBtn.addEventListener("click", filterChems);
 FoodFilterBtn.addEventListener("click", filterFood);
 showAllFilterBtn.addEventListener("click", showAllProducts);
 
+const sortByNameBtn = document.querySelector("#sortByNameBtn");
+sortByNameBtn.addEventListener("click", sortByName);
+
+const sortByPriceBtn = document.querySelector("#sortByPriceBtn");
+sortByPriceBtn.addEventListener("click", sortByPrice);
+
+function sortByPrice() {
+  filteredProducts.sort(
+    (product1, product2) => product2.price - product1.price,
+  );
+  printProducts();
+}
+
+function sortByName() {
+  filteredProducts.sort((product1, product2) => {
+    const product1Name = product1.name.toUpperCase();
+    const product2Name = product2.name.toUpperCase();
+    if (product1Name < product2Name) {
+      return -1;
+    }
+    if (product1Name > product2Name) {
+      return 1;
+    }
+    return 0;
+  });
+
+  printProducts();
+}
+
 function showAllProducts() {
   filteredProducts = Array.from(products);
   printProducts();
@@ -123,8 +152,6 @@ function filterDrinks() {
   filteredProducts = products.filter((product) => product.category == "Drinks");
   printProducts();
 }
-
-printProducts();
 
 function printProducts() {
   productsListing.innerHTML = "";
@@ -147,3 +174,5 @@ function printProducts() {
     productsListing.innerHTML += html;
   }
 }
+
+printProducts();

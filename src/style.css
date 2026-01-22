@@ -1,5 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   background-color: antiquewhite;
+}
+
+header {
+  min-height: 10svh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightblue;
+  border-bottom: 2px solid black;
+}
+
+main {
+  min-height: 100svh;
+  padding: 10px;
+}
+
+.products-container {
+  display: flex;
+  background-color: lightgreen;
+  width: 80%;
 }
 
 .products-list article {
@@ -8,11 +35,22 @@ body {
   padding: 0 5px;
   box-shadow: 5px 5px 5px gray;
   min-height: 40vh;
+
+  h2 {
+    text-align: center;
+    border-bottom: 3px solid black;
+    font-size: 1.75rem;
+  }
+
+  p {
+    padding: 7px 0;
+  }
 }
 
 .products-list .metadata {
   display: flex;
   justify-content: space-between;
+  padding-top: 5px;
 }
 
 .products-list .product-image {
@@ -24,6 +62,21 @@ body {
 .products-list .currency-icon {
   width: 16px;
   vertical-align: middle;
+}
+
+.filter,
+.sort {
+  display: flex;
+  background-color: lightpink;
+  width: 20%;
+  height: 100%;
+}
+
+footer {
+  text-align: center;
+  background-color: aliceblue;
+  min-height: 10svh;
+  width: 100%;
 }
 
 @media screen and (min-width: 720px) {

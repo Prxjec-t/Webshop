@@ -7,30 +7,37 @@
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍩</text></svg>"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Kimi Leminaho" />
+    <meta
+      name="description"
+      content="A webshop for a limited supply of items from the game franchise Fallout"
+    />
     <link rel="stylesheet" href="src/style.css" />
-    <title>FED25D | Inlämningsuppgift 1</title>
+    <title>New Vegas Store</title>
   </head>
   <body>
-    <header>header</header>
+    <header>
+      <h1>New Vegas Store</h1>
+    </header>
 
     <main>
-      <h1>Webshop</h1>
+      <div class="products-container">
+        <section class="products-list" id="products"></section>
+      </div>
 
-      <div>
+      <div class="filter">
         Filter:
         <button id="drinkFilterBtn">Drinks</button>
         <button id="foodFilterBtn">Food</button>
         <button id="chemsFilterBtn">Chems</button>
         <button id="showAllFilterBtn">Show all</button>
       </div>
-      <div>
+      <div class="sort">
         Sort:
         <button id="sortByNameBtn">Name (A-Z)</button>
         <button id="sortByPriceBtn">Price (High to Low)</button>
         <button id="sortByLowPriceBtn">Price (Low to High)</button>
       </div>
-
-      <section class="products-list" id="products"></section>
     </main>
 
     <footer>footer</footer>

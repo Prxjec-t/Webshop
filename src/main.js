@@ -1,12 +1,5 @@
 import "./style.css";
 
-const clickMeBtn = document.querySelector("#clickMe");
-clickMeBtn.addEventListener("click", helloWorld);
-
-function helloWorld() {
-  alert("Hej Världen!");
-}
-
 const currency = [{ name: "Caps", img: "./img/caps.webp" }];
 
 const products = [
@@ -94,14 +87,14 @@ const products = [
 let filteredProducts = Array.from(products);
 const productsListing = document.querySelector("#products");
 
-const DrinkFilterBtn = document.querySelector("#DrinkFilterBtn");
-const ChemsFilterBtn = document.querySelector("#ChemsFilterBtn");
-const FoodFilterBtn = document.querySelector("#FoodFilterBtn");
+const drinkFilterBtn = document.querySelector("#drinkFilterBtn");
+const chemsFilterBtn = document.querySelector("#chemsFilterBtn");
+const foodFilterBtn = document.querySelector("#foodFilterBtn");
 const showAllFilterBtn = document.querySelector("#showAllFilterBtn");
 
-DrinkFilterBtn.addEventListener("click", filterDrinks);
-ChemsFilterBtn.addEventListener("click", filterChems);
-FoodFilterBtn.addEventListener("click", filterFood);
+drinkFilterBtn.addEventListener("click", filterDrinks);
+chemsFilterBtn.addEventListener("click", filterChems);
+foodFilterBtn.addEventListener("click", filterFood);
 showAllFilterBtn.addEventListener("click", showAllProducts);
 
 const sortByNameBtn = document.querySelector("#sortByNameBtn");
@@ -149,17 +142,19 @@ function showAllProducts() {
 }
 
 function filterFood() {
-  filteredProducts = products.filter((product) => product.category == "Food");
+  filteredProducts = products.filter((product) => product.category === "Food");
   printProducts();
 }
 
 function filterChems() {
-  filteredProducts = products.filter((product) => product.category == "Chems");
+  filteredProducts = products.filter((product) => product.category === "Chems");
   printProducts();
 }
 
 function filterDrinks() {
-  filteredProducts = products.filter((product) => product.category == "Drinks");
+  filteredProducts = products.filter(
+    (product) => product.category === "Drinks",
+  );
   printProducts();
 }
 
@@ -173,11 +168,11 @@ function printProducts() {
      <article>
       <h2>${currentProduct.name}</h2>
       <div class="metadata">
-        <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" alt="${currency[0].name}"> ${currency[0].name} </p>
+        <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}"> ${currency[0].name} </p>
         <p>Betyg: ${currentProduct.rating} / 5</p>
       </div>
       <p>Kategori: ${currentProduct.category}</p>
-      <img class="product-image" src="${currentProduct.img}" alt="${currentProduct.name}" />
+      <img class="product-image" src="${currentProduct.img}" loading="lazy" alt="${currentProduct.name}" />
     </article>
   `;
 

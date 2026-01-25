@@ -1,88 +1,9 @@
 import "./style.css";
+import products from "./products.mjs";
+
+const cart = [];
 
 const currency = [{ name: "Caps", img: "./img/caps.webp" }];
-
-const products = [
-  {
-    name: "Nuka-Cola",
-    price: 20,
-    rating: 4.5,
-    category: "Drinks",
-    img: "./img/nukacola.webp",
-  },
-
-  {
-    name: "Stimpak",
-    price: 75,
-    rating: 4.5,
-    category: "Chems",
-    img: "./img/stimpak.webp",
-  },
-
-  {
-    name: "Jet",
-    price: 20,
-    rating: 1,
-    category: "Chems",
-    img: "./img/jet.webp",
-  },
-
-  {
-    name: "YumYum Deviled Egg",
-    price: 5,
-    rating: 3.5,
-    category: "Food",
-    img: "./img/yumyumdeviledeggs.webp",
-  },
-
-  {
-    name: "Purified Water",
-    price: 20,
-    rating: 5,
-    category: "Drinks",
-    img: "./img/purifiedwater.webp",
-  },
-
-  {
-    name: "RadAway",
-    price: 20,
-    rating: 4,
-    category: "Chems",
-    img: "./img/radaway.webp",
-  },
-
-  {
-    name: "Potato Crisps",
-    price: 5,
-    rating: 3,
-    category: "Food",
-    img: "./img/potatocrisps.webp",
-  },
-
-  {
-    name: "Nuka-Cola Quartz",
-    price: 40,
-    rating: 5,
-    category: "Drinks",
-    img: "./img/nukacolaquartz.webp",
-  },
-
-  {
-    name: "Buffalo Gourd Seed",
-    price: 2,
-    rating: 2,
-    category: "Food",
-    img: "./img/buffalogourdseed.webp",
-  },
-
-  {
-    name: "Mentats",
-    price: 20,
-    rating: 5,
-    category: "Chems",
-    img: "./img/mentats.webp",
-  },
-];
 
 let filteredProducts = Array.from(products);
 const productsListing = document.querySelector("#products");
@@ -161,22 +82,89 @@ function filterDrinks() {
 function printProducts() {
   productsListing.innerHTML = "";
 
+  let html = "";
+
   for (let i = 0; i < filteredProducts.length; i++) {
     const currentProduct = filteredProducts[i];
 
-    const html = `
+    html += `
      <article>
       <h2>${currentProduct.name}</h2>
       <div class="metadata">
         <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}"> ${currency[0].name} </p>
         <p>Betyg: ${currentProduct.rating} / 5</p>
-      </div>
-      <p>Kategori: ${currentProduct.category}</p>
-      <img class="product-image" src="${currentProduct.img}" loading="lazy" alt="${currentProduct.name}" />
+        </div>
+        <p> ID: ${currentProduct.id} </p>
+        <p>Kategori: ${currentProduct.category}</p>
+        <button class="decrease" data-id="${currentProduct.id}">-</button>
+        <input type="number" id="amount-${currentProduct.id}" disabled>
+        <button class="increase" data-id="${currentProduct.id}">+</button>
+        <button class="buy" data-id="${currentProduct.id}"> Add to cart </button>
+        <img class="product-image" src="${currentProduct.img}" loading="lazy" alt="${currentProduct.name}" />
     </article>
   `;
+  }
 
-    productsListing.innerHTML += html;
+  productsListing.innerHTML = html;
+
+  const buyButtons = document.querySelectorAll("#products button.buy");
+  buyButtons.forEach((btn) => {
+    btn.addEventListener("click", addProductToCart);
+  });
+
+  const increaseButtons = document.querySelectorAll(
+    "#products button.increase",
+  );
+  increaseButtons.forEach((btn) => {
+    btn.addEventListener("click", increaseProductCount);
+  });
+}
+function increaseProductCount(e) {
+  const clickedBtnId = e.target.dataset.id;
+  const input = document.querySelector(`#amount-${clickedBtnId}`);
+  input.value = Number(input.value) + 1;
+}
+
+const decreaseButtons = document.querySelectorAll("#products button.decrease");
+decreaseButtons.forEach((btn) => {
+  btn.addEventListener("click", decreaseProductCount);
+});
+function decreaseProductCount(e) {
+  const clickedBtnId = e.target.dataset.id;
+  const input = document.querySelector(`#amount-${clickedBtnId}`);
+  input.value -= 1;
+}
+
+function addProductToCart(e) {
+  const clickedBtnId = Number(e.target.dataset.id);
+
+  const product = products.find((product) => product.id === clickedBtnId);
+
+  if (product === undefined) {
+    return;
+  }
+
+  const index = cart.findIndex((product) => product.id === clickedBtnId);
+  if (index === -1) {
+    product.amount = 1;
+    cart.push(product);
+  } else {
+    product.amount += 1;
+  }
+
+  console.log(cart);
+
+  printCart();
+}
+
+const cartSection = document.querySelector("#cart");
+function printCart() {
+  cartSection.innerHTML = "";
+
+  for (let i = 0; i < cart.length; i++) {
+    cartSection.innerHTML += `
+      <p>${cart[i].name}: ${cart[i].amount}</p>
+    `;
   }
 }
 

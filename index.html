@@ -20,12 +20,14 @@
       <h1>New Vegas Store</h1>
     </header>
 
-    <section id="cart">Cart is empty.</section>
-
     <main>
-      <div class="products-container">
-        <section class="products-list" id="products"></section>
-      </div>
+      <section>
+        <div class="cart">
+          <h2>Cart</h2>
+          <p class="cart-total" id="cartTotal"></p>
+          <div id="cart">Cart is empty.</div>
+        </div>
+      </section>
 
       <div class="filter">
         Filter:
@@ -41,6 +43,111 @@
         <button id="sortByPriceBtn">Price (High to Low)</button>
         <button id="sortByLowPriceBtn">Price (Low to High)</button>
       </div>
+
+      <div class="products-container">
+        <section class="products-list" id="products"></section>
+      </div>
+
+      <form class="form-container" id="orderForm">
+        <label>
+          <span class="required">First Name</span>
+          <input
+            type="text"
+            id="firstname"
+            name="firstname"
+            autocomplete="given-name"
+            required
+          />
+          <span class="hidden error"
+            >Error: First name needs to be at least 2 characters long.</span
+          >
+        </label>
+
+        <label>
+          <span>Last Name</span>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            autocomplete="family-name"
+            required
+          />
+          <span class="hidden error"
+            >Error: Last name needs to be at least 2 characters long.</span
+          >
+        </label>
+
+        <label>
+          <span>Adress</span>
+          <input
+            type="text"
+            id="adress"
+            name="adress"
+            autocomplete="street-address"
+            required
+          />
+        </label>
+
+        <label>
+          <span>Postal Code</span>
+          <input
+            type="text"
+            id="postalcode"
+            name="postalcode"
+            autocomplete="postal-code"
+            required
+          />
+        </label>
+
+        <label>
+          <span>City</span>
+          <input
+            type="text"
+            id="city"
+            name="city"
+            autocomplete="address-level2"
+            required
+          />
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            autocomplete="email"
+            required
+          />
+          <span class="hidden error"
+            >Error: Please enter a valid email address.</span
+          >
+        </label>
+
+        <label>
+          <span>Phone number</span>
+          <input
+            type="number"
+            id="phone"
+            name="phone"
+            autocomplete="tel"
+            required
+          />
+          <span class="hidden error"
+            >Error: Please enter a valid phone number.</span
+          >
+        </label>
+
+        <div class="invoiceOrCard">
+          <input type="radio" name="invoiceOrCard" value="invoice" />
+          <input type="radio" name="invoiceOrCard" value="card" />
+        </div>
+
+        <div id="cardPayment">card</div>
+        <div id="invoicePayment">invoice</div>
+
+        <button id="orderBtn" disabled="disabled">Order</button>
+      </form>
     </main>
 
     <footer>footer</footer>

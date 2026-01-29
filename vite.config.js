@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "fed25d-js-intro-inl-1-Prxjec-t/",
+  base: "/fed25d-js-intro-inl-1-Prxjec-t/",
 });

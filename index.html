@@ -17,17 +17,36 @@
   </head>
   <body>
     <header>
-      <h1>New Vegas Store</h1>
+      <a href="#top">
+        <h1>New Vegas Store</h1>
+      </a>
+      <button id="toggleCartBtn">View cart</button>
     </header>
 
     <main>
-      <section>
-        <div class="cart">
-          <h2>Cart</h2>
-          <p class="cart-total" id="cartTotal"></p>
-          <div id="cart">Cart is empty.</div>
-        </div>
-      </section>
+      <div class="cartWrapper" id="cartWrapper" class="hidden">
+        <section>
+          <div class="cart">
+            <h2>Cart</h2>
+            <p class="cart-total" id="cartTotal"></p>
+            <p id="shippingCost"></p>
+            <div id="mondayDiscountText" class="hidden">
+              Monday Discount: 10 % on the whole order.
+            </div>
+
+            <div id="cart">Cart is empty.</div>
+            <div class="cart-actions">
+              <button id="resetCartBtn" class="reset-button">Reset Cart</button>
+              <button id="checkoutBtn" class="checkout-button">
+                Proceed to Checkout
+              </button>
+            </div>
+            <div class="statusMessage hidden" id="statusMessage">
+              Cart was reset because user took to long.
+            </div>
+          </div>
+        </section>
+      </div>
 
       <div class="filter">
         Filter:
@@ -48,13 +67,19 @@
         <section class="products-list" id="products"></section>
       </div>
 
-      <form class="form-container" id="orderForm">
+      <form class="form-container hidden" id="orderForm">
+        <button type="button" id="closeFormBtn" class="close-btn">
+          &times;
+        </button>
+
+        <h2>Shipping Details</h2>
+
         <label>
           <span class="required">First Name</span>
           <input
             type="text"
             id="firstname"
-            name="firstname"
+            name="firstName"
             autocomplete="given-name"
             required
           />
@@ -68,7 +93,7 @@
           <input
             type="text"
             id="lastname"
-            name="lastname"
+            name="lastName"
             autocomplete="family-name"
             required
           />
@@ -86,6 +111,7 @@
             autocomplete="street-address"
             required
           />
+          <span class="hidden error">Error: Please enter valid address.</span>
         </label>
 
         <label>
@@ -97,6 +123,9 @@
             autocomplete="postal-code"
             required
           />
+          <span class="hidden error"
+            >Error: Please enter a valid postal code.</span
+          >
         </label>
 
         <label>
@@ -108,6 +137,7 @@
             autocomplete="address-level2"
             required
           />
+          <span class="hidden error">Error: Please enter a valid city.</span>
         </label>
 
         <label>
@@ -127,7 +157,7 @@
         <label>
           <span>Phone number</span>
           <input
-            type="number"
+            type="tel"
             id="phone"
             name="phone"
             autocomplete="tel"
@@ -143,14 +173,59 @@
           <input type="radio" name="invoiceOrCard" value="card" />
         </div>
 
-        <div id="cardPayment">card</div>
-        <div id="invoicePayment">invoice</div>
+        <div class="cardPayment hidden" id="cardPayment">
+          <label>
+            <span>Card number</span>
+            <input type="number" name="cardNumber" id="cardNumber" />
+          </label>
 
-        <button id="orderBtn" disabled="disabled">Order</button>
+          <label>
+            <span>YY</span>
+            <input type="number" name="year" id="year" />
+          </label>
+
+          <label>
+            <span>MM</span>
+            <input type="number" name="month" id="month" />
+          </label>
+
+          <label>
+            <span>Security code</span>
+            <input type="number" name="securityCode" id="securityCode" />
+          </label>
+        </div>
+
+        <div class="invoicePayment hidden" id="invoicePayment">
+          <label>
+            Social Security No:
+            <input type="text" id="ssn" placeholder="YYYYMMDD-XXXX" />
+            <span class="hidden error">Error: Use format YYYMMDD-XXXX</span>
+          </label>
+        </div>
+
+        <label
+          >Discount Code:
+          <input type="text" id="discountCode" />
+        </label>
+
+        <label>
+          <input type="checkbox" id="gdpr" required /> I agree to the processing
+          of personal data.
+        </label>
+
+        <label>
+          <input type="checkbox" id="newsletter" checked /> Subscribe to the New
+          Vegas Store Newsletter.
+        </label>
+
+        <div id="form-error-summary" class="hidden error-text"></div>
+        <button class="orderBtn" id="orderBtn" disabled>Order</button>
+        <button type="button" id="clearFormBtn">Clear Order</button>
       </form>
     </main>
 
-    <footer>footer</footer>
+    <footer>&copy; Kimi Leminaho</footer>
+    <div id="notification-toast" class="hidden toast"></div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

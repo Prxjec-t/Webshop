@@ -91,11 +91,11 @@ function printProducts() {
      <article>
       <h2>${currentProduct.name}</h2>
       <div class="metadata">
-        <p>Pris: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}"> ${currency[0].name} </p>
-        <p>Betyg: ${currentProduct.rating} / 5</p>
+        <p>Price: ${currentProduct.price} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}"> ${currency[0].name} </p>
+        <p>Rating: ${currentProduct.rating} / 5</p>
         </div>
         <p> ID: ${currentProduct.id} </p>
-        <p>Kategori: ${currentProduct.category}</p>
+        <p>Category: ${currentProduct.category}</p>
         <button class="decrease" data-id="${currentProduct.id}">-</button>
         <input type="number" class="amount-bar" id="amount-${currentProduct.id}" disabled>
         <button class="increase" data-id="${currentProduct.id}">+</button>
@@ -154,11 +154,11 @@ function addProductToCart(e) {
 
   const inputField = document.querySelector(`#amount-${clickedBtnId}`);
   let amount = Number(inputField.value);
-  if (amount < 1) {
+  if (amount < 0) {
     return;
   }
 
-  inputField.value = 1;
+  inputField.value = 0;
 
   const index = cart.findIndex((product) => product.id === clickedBtnId);
   if (index === -1) {
@@ -168,23 +168,118 @@ function addProductToCart(e) {
     product.amount += amount;
   }
 
+  if (amount > 0) {
+    cartWrapper.classList.remove("hidden");
+  }
   updateCartTotals();
 
   printCart();
+
+  checkFormFieldsValidity();
 }
 
+// MARK: CART
+
+const toggleCartBtn = document.querySelector("#toggleCartBtn");
+const cartWrapper = document.querySelector("#cartWrapper");
+const checkoutBtn = document.querySelector("#checkoutBtn");
+const orderForm = document.querySelector("#orderForm");
+const closeFormBtn = document.querySelector("#closeFormBtn");
+
+closeFormBtn.addEventListener("click", () => {
+  orderForm.classList.add("hidden");
+});
+
+checkoutBtn.addEventListener("click", () => {
+  orderForm.classList.remove("hidden");
+});
+
+toggleCartBtn.addEventListener("click", () => {
+  cartWrapper.classList.toggle("hidden");
+});
+
+cartWrapper.classList.add("hidden");
+
 const cartTotalEl = document.querySelector("#cartTotal");
+
 function updateCartTotals() {
   let cartTotal = 0;
+  let totalCount = 0;
+
+  const now = new Date();
+  const day = now.getDay();
+  const hour = now.getHours();
+
+  const isWeekend =
+    (day === 5 && hour >= 15) ||
+    day === 6 ||
+    day === 0 ||
+    (day === 1 && hour < 3);
+
+  const isMondayDiscount = day === 1 && hour < 10;
 
   for (let i = 0; i < cart.length; i++) {
-    const productSum = cart[i].price * cart[i].amount;
+    let currentPrice = cart[i].price;
+
+    if (isWeekend) {
+      currentPrice *= 1.15;
+    }
+
+    if (cart[i].amount >= 10) {
+      currentPrice = currentPrice * 0.9;
+    }
+
+    const productSum = currentPrice * cart[i].amount;
     cartTotal += productSum;
+    totalCount += cart[i].amount;
   }
 
-  cartTotalEl.innerHTML = `${cartTotal} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}">`;
+  let shippingCost = 0;
+  if (totalCount > 15) {
+    shippingCost = 0;
+  } else {
+    shippingCost = 25 + cartTotal * 0.1;
+  }
+
+  let finalTotal = cartTotal + shippingCost;
+
+  const discountMsg = document.querySelector("#mondayDiscountText");
+  if (isMondayDiscount) {
+    finalTotal *= 0.9;
+    discountMsg.classList.remove("hidden");
+  } else {
+    discountMsg.classList.add("hidden");
+  }
+
+  const invoiceRadio = document.querySelector(
+    'input[type="radio"][value="invoice"]',
+  );
+  const cardRadio = document.querySelector('input[type="radio"][value="card"]');
+
+  if (finalTotal > 800) {
+    invoiceRadio.disabled = true;
+
+    if (invoiceRadio.checked) {
+      cardRadio.checked = true;
+      invoiceSection.classList.add("hidden");
+      cardSection.classList.remove("hidden");
+    }
+  } else {
+    invoiceRadio.disabled = false;
+  }
+
+  cartTotalEl.innerHTML = `${cartTotal.toFixed(2)} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}">`;
+
+  document.querySelector("#shippingCost").innerHTML =
+    `Shipping: ${shippingCost.toFixed(2)} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}">`;
+
+  document.querySelector("#cartTotal").innerHTML =
+    `${finalTotal.toFixed(2)} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}">`;
+
+  // cartTotalEl.innerHTML = `${cartTotal} <img class="currency-icon" src="${currency[0].img}" loading="lazy" alt="${currency[0].name}">`;
 
   highlightCartTotalChange();
+  checkFormFieldsValidity();
 }
 
 function highlightCartTotalChange() {
@@ -241,10 +336,12 @@ function decreaseProductFromCart(e) {
   const rowId = Number(e.target.dataset.id);
   const product = cart.find((product) => product.id === rowId);
 
-  if (product.amount <= 0) {
-    return;
-  }
   product.amount -= 1;
+
+  if (product.amount <= 0) {
+    const productIndex = cart.indexOf(product);
+    cart.splice(productIndex, 1);
+  }
 
   printCart();
   updateCartTotals();
@@ -272,20 +369,77 @@ function deleteProductFromCart(e) {
   updateCartTotals();
 }
 
+const resetCartBtn = document.querySelector("#resetCartBtn");
+resetCartBtn.addEventListener("click", resetCart);
+
+function resetCart() {
+  cart.length = 0;
+
+  updateCartTotals();
+  printCart();
+}
+
 printProducts();
 
-const firstNameRegEx = /^(?=.{2,}$)[A-Za-z]+(?:[.-][A-Za-z]+)*$/;
+//MARK: VALIDATIONS
+
+const nameRegEx = /^(?=.{2,}$)[A-Za-z]+(?:[.-][A-Za-z]+)*$/;
+const adressRegEx = /^(?=.{2,}$)[A-Za-z]+(?:[.-][A-Za-z]+)*$/;
 const emailRegEx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const phoneRegEx = /^\+?[0-9][0-9\s().-]{6,14}[0-9]$/;
+const phoneRegEx = /^07[02369]\d{7}$/;
+const postalCodeRegEx = /^[0-9]{5}$/;
+const cityRegEx = /^(?=.{2,}$)[A-Za-z]+(?:[.-][A-Za-z]+)*$/;
+const ssnRegex = /^(\d{6}|\d{8})[-]?\d{4}$/;
 
 const orderBtn = document.querySelector("#orderBtn");
+const clearFormBtn = document.querySelector("#clearFormBtn");
 const firstName = document.querySelector("#firstname");
+const lastName = document.querySelector("#lastname");
+const adress = document.querySelector("#adress");
+const postalCode = document.querySelector("#postalcode");
+const city = document.querySelector("#city");
 const emailField = document.querySelector("#email");
 const phoneField = document.querySelector("#phone");
+const ssnInput = document.querySelector("#ssn");
+const cardPayment = document.querySelector('input[type="radio"].card');
+const invoicePayment = document.querySelector('input[type="radio"].invoice');
+const invoiceSection = document.querySelector("#invoicePayment");
+const cardSection = document.querySelector("#cardPayment");
+const invoiceRadio = document.querySelector('input[value="invoice"]');
+const cardRadio = document.querySelector('input[value="card"]');
+const gdprCheckbox = document.querySelector("#gdpr");
+const cardNumberField = document.querySelector("#cardNumber");
 
 firstName.addEventListener("focusout", validateFirstNameField);
+lastName.addEventListener("focusout", validateLastNameField);
 emailField.addEventListener("focusout", validateEmailField);
+adress.addEventListener("focusout", validateAdressField);
+postalCode.addEventListener("focusout", validatePostalCodeField);
+city.addEventListener("focusout", validateCityField);
 phoneField.addEventListener("focusout", validatePhoneField);
+ssnInput.addEventListener("focusout", validateSSNField);
+
+clearFormBtn.addEventListener("click", () => {
+  orderForm.reset();
+  cart.length = 0;
+  document
+    .querySelectorAll(".amount-bar")
+    .forEach((input) => (input.value = 0));
+
+  printCart();
+  updateCartTotals();
+  checkFormFieldsValidity();
+});
+
+function validateSSNField() {
+  const isValid = ssnRegex.test(ssnInput.value);
+  if (isValid || ssnInput.value === "") {
+    ssnInput.nextElementSibling.classList.add("hidden");
+  } else {
+    ssnInput.nextElementSibling.classList.remove("hidden");
+  }
+  return isValid;
+}
 
 function validateFirstNameField() {
   const inputFieldValue = firstName.value;
@@ -294,7 +448,7 @@ function validateFirstNameField() {
     return;
   }
 
-  const isValidFirstName = firstNameRegEx.test(inputFieldValue);
+  const isValidFirstName = nameRegEx.test(inputFieldValue);
 
   if (isValidFirstName) {
     firstName.nextElementSibling.classList.add("hidden");
@@ -303,6 +457,78 @@ function validateFirstNameField() {
   }
 
   return isValidFirstName;
+}
+
+function validateLastNameField() {
+  const inputFieldValue = lastName.value;
+
+  if (inputFieldValue.length === 0) {
+    return;
+  }
+
+  const isValidLastName = nameRegEx.test(inputFieldValue);
+
+  if (isValidLastName) {
+    lastName.nextElementSibling.classList.add("hidden");
+  } else {
+    lastName.nextElementSibling.classList.remove("hidden");
+  }
+
+  return isValidLastName;
+}
+
+function validateAdressField() {
+  const inputFieldValue = adress.value;
+
+  if (inputFieldValue.length === 0) {
+    return;
+  }
+
+  const isValidAdress = adressRegEx.test(inputFieldValue);
+
+  if (isValidAdress) {
+    adress.nextElementSibling.classList.add("hidden");
+  } else {
+    adress.nextElementSibling.classList.remove("hidden");
+  }
+
+  return isValidAdress;
+}
+
+function validatePostalCodeField() {
+  const inputFieldValue = postalCode.value;
+
+  if (inputFieldValue.length === 0) {
+    return;
+  }
+
+  const isValidPostalCode = postalCodeRegEx.test(inputFieldValue);
+
+  if (isValidPostalCode) {
+    postalCode.nextElementSibling.classList.add("hidden");
+  } else {
+    postalCode.nextElementSibling.classList.remove("hidden");
+  }
+
+  return isValidPostalCode;
+}
+
+function validateCityField() {
+  const inputFieldValue = city.value;
+
+  if (inputFieldValue.length === 0) {
+    return;
+  }
+
+  const isValidCity = cityRegEx.test(inputFieldValue);
+
+  if (isValidCity) {
+    city.nextElementSibling.classList.add("hidden");
+  } else {
+    city.nextElementSibling.classList.remove("hidden");
+  }
+
+  return isValidCity;
 }
 
 function validateEmailField() {
@@ -324,10 +550,11 @@ function validateEmailField() {
 }
 
 function validatePhoneField() {
-  const inputFieldValue = phoneRegEx.value;
+  const inputFieldValue = phoneField.value;
 
   if (inputFieldValue.length === 0) {
-    return;
+    phoneField.nextElementSibling.classList.add("hidden");
+    return false;
   }
 
   const isValidPhone = phoneRegEx.test(inputFieldValue);
@@ -339,4 +566,136 @@ function validatePhoneField() {
   }
 
   return isValidPhone;
+}
+
+orderBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  showSuccessNotification(
+    "Thank you for your order! A confirmation has been sent.",
+  );
+
+  orderForm.classList.add("hidden");
+  cartWrapper.classList.add("hidden");
+
+  cart.length = 0;
+  printCart();
+  updateCartTotals();
+
+  const form = document.querySelector("form");
+  form.reset();
+
+  formErrorSummary.classList.add("hidden");
+
+  checkFormFieldsValidity();
+});
+
+function checkFormFieldsValidity() {
+  const isFirstnameValid = nameRegEx.test(firstName.value);
+  const isLastnameValid = nameRegEx.test(lastName.value);
+  const isAdressValid = adressRegEx.test(adress.value);
+  const isPostalCodeValid = postalCodeRegEx.test(postalCode.value);
+  const isCityValid = cityRegEx.test(city.value);
+  const isEmailValid = emailRegEx.test(emailField.value);
+  const isPhoneValid = phoneRegEx.test(phoneField.value);
+  const isCartNotEmpty = cart.length > 0;
+  const isGdprChecked = gdprCheckbox.checked;
+  const isSsnValid = ssnRegex.test(ssnInput.value);
+
+  let isPaymentValid = false;
+
+  if (invoiceRadio.checked) {
+    isPaymentValid = isSsnValid;
+  } else if (cardRadio.checked) {
+    const cardNumber = document.querySelector("#cardNumber").value;
+    isPaymentValid = cardNumber.length >= 12;
+  }
+
+  if (
+    isFirstnameValid &&
+    isLastnameValid &&
+    isAdressValid &&
+    isPostalCodeValid &&
+    isCityValid &&
+    isEmailValid &&
+    isPhoneValid &&
+    isCartNotEmpty &&
+    isGdprChecked &&
+    isPaymentValid
+  ) {
+    orderBtn.disabled = false;
+  } else {
+    orderBtn.disabled = true;
+  }
+}
+
+const notificationToast = document.querySelector("#notification-toast");
+
+function showSuccessNotification(message) {
+  notificationToast.textContent = message;
+  notificationToast.classList.remove("hidden");
+
+  setTimeout(() => {
+    notificationToast.classList.add("hidden");
+  }, 4000);
+}
+
+firstName.addEventListener("input", checkFormFieldsValidity);
+lastName.addEventListener("input", checkFormFieldsValidity);
+adress.addEventListener("input", checkFormFieldsValidity);
+postalCode.addEventListener("input", checkFormFieldsValidity);
+city.addEventListener("input", checkFormFieldsValidity);
+emailField.addEventListener("input", checkFormFieldsValidity);
+phoneField.addEventListener("input", checkFormFieldsValidity);
+ssnInput.addEventListener("input", checkFormFieldsValidity);
+gdprCheckbox.addEventListener("change", checkFormFieldsValidity);
+document.querySelectorAll("#cardPayment input").forEach((input) => {
+  input.addEventListener("input", checkFormFieldsValidity);
+});
+
+checkFormFieldsValidity();
+
+[cardRadio, invoiceRadio].forEach((radio) => {
+  radio.addEventListener("change", () => {
+    if (invoiceRadio.checked) {
+      invoiceSection.classList.remove("hidden");
+      cardSection.classList.add("hidden");
+    }
+    if (cardRadio.checked) {
+      invoiceSection.classList.add("hidden");
+      cardSection.classList.remove("hidden");
+    }
+    checkFormFieldsValidity();
+  });
+});
+
+// MARK: DISCOUNTS
+
+const SLOWNESS_TIMER_MINUTES = 15;
+setTimeout(clearOrder, 1000 * 60 * SLOWNESS_TIMER_MINUTES);
+
+function clearOrder() {
+  cart.length = 0;
+
+  printCart();
+  updateCartTotals();
+
+  if (orderForm) {
+    orderForm.reset();
+  }
+
+  const msg = document.getElementById("statusMessage");
+  msg.style.display = "block";
+
+  setTimeout(() => {
+    msg.style.display = "none";
+  }, 5000);
+}
+
+const date = new Date(2026, 0, 26, 9, 0);
+console.log(date);
+
+const MONDAY = 1;
+if (date.getDay() === MONDAY && date.getHours() < 10) {
+  console.log("it is monday before 10 o clokc");
 }

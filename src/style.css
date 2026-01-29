@@ -1,3 +1,19 @@
+:root {
+  --nv-amber-bright: #ffb642;
+  --nv-amber-muted: #f3a770;
+  --nv-amber-glow: rgba(255, 182, 66, 0.4);
+
+  --nv-desert-sand: #fad5a5;
+  --nv-wasteland-brown: #4f2b1b;
+  --nv-oxidized-steel: #808080;
+
+  --nv-sunset-red: #8f1b15;
+  --nv-nuclear-yellow: #ffff00;
+  --nv-vault-door: #393e46;
+
+  --nv-bg-dark: #1a130d;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,21 +21,35 @@
 }
 
 body {
-  background-color: antiquewhite;
+  background-color: var(--nv-desert-sand);
 }
 
 header {
+  position: sticky;
+  top: 0;
   min-height: 10svh;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: lightblue;
+  justify-content: space-evenly;
+  /* background-color: lightblue; */
+  background-color: var(--nv-amber-bright);
   border-bottom: 2px solid black;
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
+  a:hover {
+    background-color: var(--nv-amber-muted);
+    font-size: 1.1rem;
+    border: 2px solid black;
+  }
 }
 
 main {
-  min-height: 110svh;
+  min-height: 130svh;
 }
 
 .cart {
@@ -30,9 +60,16 @@ main {
   padding: 10px;
 }
 
+.cart-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 .highlight-price {
   font-weight: bold;
   color: darkblue;
+  font-size: 1.1rem;
 }
 
 .cart-container {
@@ -52,17 +89,11 @@ main {
 .increase-cart-product {
   padding: 5px;
   margin-left: 10px;
-  border: 2px solid black;
-  background-color: lightgray;
-  cursor: pointer;
 }
 
 .delete-product {
   padding: 5px;
   margin-left: 10px;
-  border: 2px solid black;
-  background-color: lightgray;
-  cursor: pointer;
 }
 
 .filter,
@@ -71,18 +102,23 @@ main {
   align-items: center;
   justify-content: center;
   gap: 4px;
+}
 
-  button {
-    padding: 7px;
-    margin: 8px 0;
-    border: 2px solid black;
-    background-color: lightgray;
-    cursor: pointer;
-  }
+button {
+  padding: 7px;
+  margin: 8px 0;
+  border: 2px solid black;
+  background-color: var(--nv-oxidized-steel);
+  cursor: pointer;
+}
 
-  button:focus {
-    background-color: green;
-  }
+button:focus {
+  background-color: green;
+}
+
+button:hover {
+  background-color: var(--nv-amber-bright);
+  box-shadow: 0 0 10px var(--nv-amber-bright);
 }
 
 @media (min-width: 768px) {
@@ -121,24 +157,17 @@ main {
   height: 28px;
   border: 2px solid black;
   background-color: lightgray;
+  width: 60%;
 }
 
 .buy {
-  padding: 5px;
-  margin-top: 10px;
-  border: 2px solid black;
-  background-color: lightgray;
-  cursor: pointer;
-  width: 100%;
+  width: 85%;
 }
 
 .increase,
 .decrease {
   padding: 5px;
   margin-left: 10px;
-  border: 2px solid black;
-  background-color: lightgray;
-  cursor: pointer;
 }
 
 .products-list .metadata {
@@ -158,13 +187,7 @@ main {
   vertical-align: middle;
 }
 
-footer {
-  text-align: center;
-  background-color: aliceblue;
-  min-height: 10svh;
-}
-
-@media screen and (min-width: 768px) {
+@media (min-width: 768px) {
   .products-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -177,7 +200,7 @@ footer {
   }
 }
 
-@media screen and (min-width: 1280px) {
+@media (min-width: 1280px) {
   .products-list {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -190,14 +213,167 @@ footer {
   }
 }
 
-.hidden {
-  display: none;
+.error-text {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #2ecc71;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: opacity 0.3s ease;
 }
 
 .form-container {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 80%;
+  max-height: 95svh;
+  overflow-y: auto;
+  margin: 40px auto;
+  padding: 2rem;
+  background-color: var(--nv-wasteland-brown);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 1280px) {
+  .form-container {
+    width: 60%;
+  }
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  color: var(--nv-oxidized-steel);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1e293b;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.error {
+  color: #dc2626;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+.required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+.invoiceOrCard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.invoiceOrCard input[type="radio"] {
+  appearance: none;
+  background-color: #fff;
+  padding: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 5px;
-  margin: 20px 10px;
+}
+
+.invoiceOrCard input[value="invoice"]::before {
+  content: "Invoice";
+  font-weight: bold;
+}
+
+.invoiceOrCard input[value="card"]::before {
+  content: "Credit Card";
+  font-weight: bold;
+}
+
+.invoiceOrCard input:checked {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.cardPayment,
+.invoicePayment {
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #64748b;
+  border: 1px dashed #cbd5e1;
+}
+
+button.orderBtn {
+  margin-top: 10px;
+  padding: 14px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button.orderBtn:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+button.orderBtn:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+footer {
+  background-color: var(--nv-vault-door);
+  color: var(--nv-desert-sand);
+  min-height: 10svh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
 }
